@@ -3,7 +3,7 @@ import {PDFViewer, Document, Text, Page} from "@react-pdf/renderer";
 import {FileDetailsProps, File} from "../interfaces/Task";
 
 function PDFFile(files:FileDetailsProps) {
-    const [file, setFile] = useState<File>(files.files);
+    const file:File=files.files;
     console.log(file)
     return (
         <div>

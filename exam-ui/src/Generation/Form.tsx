@@ -1,10 +1,23 @@
 import React, {ChangeEvent, useState} from "react";
-import {FileDetailsProps, Task, File} from "../interfaces/Task";
+import {Task, File} from "../interfaces/Task";
 import PDFFile from "./PDFFile";
 
 //TODO: überlegen wie das System mit der Zurodnung klappen könnte (UUID zu extrem?)
-export default function Form(files: FileDetailsProps) {
-    const [file, setFile] = useState(files.files);
+export default function Form() {
+    const initialFileState: File = {
+        tasks: [{
+            question: '',
+            optionA: '',
+            optionB: '',
+            optionC: '',
+            optionD: '',
+            id: null as any
+        }],
+        title: ''
+
+    }
+    const containerElements: any[] = [];
+    const [file, setFile] = useState<File>(initialFileState);
 
     // Definiere ein Mapping von Feldnamen zu ihren Typen
     const fieldTypes: Record<keyof Task, string> = {
@@ -13,6 +26,7 @@ export default function Form(files: FileDetailsProps) {
         optionB: '',
         optionC: '',
         optionD: '',
+        id: null as any
     };
 
     function handleChange(event: ChangeEvent<HTMLInputElement>) {
@@ -25,7 +39,7 @@ export default function Form(files: FileDetailsProps) {
         console.log(file);
     }
 
-    function handleTaskChange(event: ChangeEvent<HTMLInputElement>, index: number) {
+    function handleTaskChange(event: ChangeEvent<HTMLInputElement>, index: number):void {
         const {name, value} = event.target;
         if (name in fieldTypes) {
             setFile(prevData => {
@@ -39,42 +53,39 @@ export default function Form(files: FileDetailsProps) {
         console.log(file);
     }
 
-    function addQuestion(index: string) {
+    function addQuestion(index: string, e: (event: ChangeEvent<HTMLInputElement>, index: number) => void) {
         const number = parseInt(index)
-        const task: Task = {question: 'question', optionA: '', optionB: '', optionC: '', optionD: ''}
+        const newTask: Task = {question: 'question', optionA: '', optionB: '', optionC: '', optionD: '', id: number}
 
         setFile(prevData => {
-            const newTasks: Task[] = [...prevData.tasks];
-            newTasks.splice(number, 0, task);
+            const tasks: Task[] = [...prevData.tasks]
+            tasks.push(newTask)
+
             return {
-                ...prevData, tasks: newTasks
+                ...prevData, tasks: tasks
             }
         })
 
-        return (
-            <div className="row pt-4">
-                <div className="col-md-12">
-                    <label htmlFor="inputPassword5"
-                           className="col-md-form-label">Frage {number + 1}</label>
-                </div>
-                <div className="col-md-12">
-                    <input type="text" id={index}
-                           className="form-control"
-                           value={file.tasks[number].question}
-                           onChange={(e) => handleTaskChange(e, number)}
-                           aria-describedby="passwordHelpBlock"/>
-                </div>
+        containerElements.push(<div className="row pt-4">
+            <div className="col-md-12">
+                <label htmlFor="inputPassword5"
+                       className="col-md-form-label">Frage {number + 1}</label>
             </div>
-        );
-    }
+            <div className="col-md-12">
+                <input type="text" id={index}
+                       className="form-control"
+                       name="question"
 
-    function deleteQuestion(index: string) {
-
+                       onChange={(e) => handleTaskChange(e, number)}
+                       aria-describedby="passwordHelpBlock"/>
+            </div>
+        </div>)
     }
 
     //TODO: index korrigieren (haut so nicht hin)
-    function addOption(index: string[][]) {
-        return (<div id={index[0][0]}>
+    function AddOption(index: string[][]) {
+        return (
+            <div id={index[0][0]}>
                 <div className="py-1 row row-cols-4 px-0 mx-sm-1">
                     <div className="col-md-1">A)</div>
                     <div className="col-md-5"><input type="text" id="inputPassword5"
@@ -112,7 +123,7 @@ export default function Form(files: FileDetailsProps) {
     }
 
     return (
-        <div className="row row-col-2">
+        <div className="row">
             <div className="col-md-8 pt-5">
 
                 { /*Überschrift*/}
@@ -133,8 +144,12 @@ export default function Form(files: FileDetailsProps) {
 
                 {/*Frage 1*/
                 }
-                <button onClick={() => addQuestion("7098")}>Füge eine Frage hinzu</button>
-                <button onClick={() => addOption([[("7098"), ("afsdk")], [("djhdsjh")]])}>Füge weitere optionen hinzu
+
+                <button onClick={() => addQuestion("7098", (event, index) =>event)}>Füge eine Frage hinzu</button>
+
+                {containerElements}
+
+                <button onClick={() => AddOption([[("7098"), ("afsdk")], [("djhdsjh")]])}>Füge weitere optionen hinzu
                 </button>
 
                 {/*Frage 2*/
@@ -157,7 +172,7 @@ export default function Form(files: FileDetailsProps) {
 
 
             <div className="col-md-4">
-                <PDFFile files={files.files}/>
+                <PDFFile files={file}/>
 
             </div>
         </div>

@@ -5,6 +5,7 @@ export interface Task {
     optionB?: string;
     optionC?: string;
     optionD?: string;
+    id: number;
 
 }
 
@@ -14,6 +15,7 @@ export interface File {
     tasks: Task[];
 
 }
+
 export interface FileDetailsProps {
-    files:File
+    files: File
 }
