@@ -1,11 +1,8 @@
 export interface Task {
 
     question: string;
-    optionA?: string;
-    optionB?: string;
-    optionC?: string;
-    optionD?: string;
-    id: number;
+    options: Record<string, string>;
+    id: string | null;
 
 }
 

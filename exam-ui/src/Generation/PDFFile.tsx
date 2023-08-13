@@ -1,6 +1,6 @@
-import React, {useState} from "react";
-import {PDFViewer, Document, Text, Page} from "@react-pdf/renderer";
-import {FileDetailsProps, File} from "../interfaces/Task";
+import React from "react";
+import {Document, Page, PDFViewer, Text} from "@react-pdf/renderer";
+import {File, FileDetailsProps} from "../interfaces/Task";
 
 function PDFFile(files:FileDetailsProps) {
     const file:File=files.files;
