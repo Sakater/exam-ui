@@ -1,13 +1,16 @@
 import React from "react";
 import {Document, Page, PDFViewer, Text} from "@react-pdf/renderer";
-import {File, FileDetailsProps} from "../interfaces/Task";
+import {File} from "../interfaces/Task";
 
-function PDFFile(files:FileDetailsProps) {
-    const file:File=files.files;
+type PDFFileProps = {
+    file: File;
+};
+
+function PDFFile({file}:PDFFileProps) {
     console.log(file)
     return (
         <div>
-            <PDFViewer height={500} showToolbar={true}>
+            <PDFViewer height={500} showToolbar>
                 <Document pageLayout={"singlePage"}>
                     <Page size={"A4"}>
                         <Text>

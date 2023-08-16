@@ -1,60 +1,96 @@
-/*
-import React, { ChangeEvent, useState } from "react";
-import { Task, File } from "../interfaces/Task";
+import React, {ChangeEvent, useState} from "react";
+import {Task, File, Option, Id} from "../interfaces/Task";
 import PDFFile from "./PDFFile";
+import {v4 as uuidv4} from "uuid";
 
 export default function Form() {
     const initialFileState: File = {
         tasks: [
             {
                 question: '',
-                optionA: '',
-                optionB: '',
-                optionC: '',
-                optionD: '',
-                id: null as any
+                options: [],
+                id: ''
             }
         ],
-        title: ''
+        title: '',
+        author: '',
+        date: ''
     };
 
-    const [file, setFile] = useState<File>(initialFileState);
+    const [tasks, setTasks] = useState<Task[]>(initialFileState.tasks);
 
-    function handleFileChange(event: ChangeEvent<HTMLInputElement>) {
+    /*function handleFileChange(event: ChangeEvent<HTMLInputElement>) {
         const { name, value } = event.target;
-        setFile(prevData => ({
+        setTasks(prevData => ({
             ...prevData,
             [name]: value
         }));
-    }
+    }*/
 
-    function handleTaskChange(event: ChangeEvent<HTMLInputElement>, index: number, name: keyof Task): void {
-        const { value } = event.target;
+    function handleTaskChange({target: {name, value}}: ChangeEvent<HTMLInputElement>, index: number) {
         const typedValue: string = value;
-        setFile(prevData => {
-            const newTasks: Task[] = [...prevData.tasks];
-            newTasks[index]["question"] = typedValue
-            return {
-                ...prevData,
-                tasks: newTasks
-            };
+        setTasks(prevTasks => {
+            return prevTasks.map((prevTask, mapIndex) => {
+                if (mapIndex === index) {
+                    return {
+                        ...prevTask,
+                        question: typedValue
+                    }
+                }
+                return prevTask;
+            })
         });
     }
 
-    function addQuestion() {
+    function addTask() {
         const newTask: Task = {
             question: '',
-            optionA: '',
-            optionB: '',
-            optionC: '',
-            optionD: '',
-            id: Date.now() // Use a more appropriate method to generate IDs
+            options: [],
+            id: uuidv4() // Use a more appropriate method to generate IDs
         };
 
-        setFile(prevData => ({
-            ...prevData,
-            tasks: [...prevData.tasks, newTask]
-        }));
+        setTasks(prevData => [
+            ...prevData, newTask
+        ]);
+    }
+
+    function addOption(index: number) {
+        const newOption: Option = {
+            name: '',
+            id: uuidv4() // Use a more appropriate method to generate IDs
+        };
+
+        setTasks(prevTasks => {
+            return prevTasks.map((prevTask, mapIndex) => {
+                if (mapIndex === index) {
+                    return {
+                        ...prevTask,
+                        options: [...prevTask.options, newOption]
+                    }
+                }
+                return prevTask;
+            })
+        });
+    }
+
+    function handleChangeOption({target: {name, value}}: ChangeEvent<HTMLInputElement>, index: number) {
+
+        const newOption: Option = {
+            name: '',
+            id: uuidv4() // Use a more appropriate method to generate IDs
+        };
+
+        setTasks(prevTasks => {
+            return prevTasks.map((prevTask, mapIndex) => {
+                if (mapIndex === index) {
+                    return {
+                        ...prevTask,
+                        options: [...prevTask.options, newOption]
+                    }
+                }
+                return prevTask;
+            })
+        });
     }
 
     return (
@@ -69,165 +105,52 @@ export default function Form() {
                             type="text"
                             id="inputPassword5"
                             className="form-control"
-                            value={file.title}
-                            name="title"
-                            onChange={handleFileChange}
-                            aria-describedby="passwordHelpBlock"
+
                         />
                     </div>
                 </div>
 
-                <button onClick={addQuestion}>Füge eine Frage hinzu</button>
+                <button onClick={addTask}>Füge eine Frage hinzu</button>
 
-                {file.tasks.map((task, index) => (
+                {tasks.map((task, index) => (
                     <div key={task.id}>
-                        {/!* Render question input *!/}
+
+                        <label>{`${index+1}. Frage`}</label>
                         <input
                             type="text"
                             className="form-control"
                             value={task.question}
                             name="question"
-                            onChange={(e) => handleTaskChange(e, index, 'question')}
+                            onChange={(e) => handleTaskChange(e, index)}
                         />
-
-                        {/!* Render options input *!/}
-                        <input
-                            type="text"
-                            className="form-control"
-                            value={task.optionA}
-                            name="optionA"
-                            onChange={(e) => handleTaskChange(e, index, 'optionA')}
-                        />
-                        {/!* Render other options similarly *!/}
-                    </div>
-                ))}
-
-                {/!* ... other code ... *!/}
-
-            </div>
-
-            <div className="col-md-4">
-                <PDFFile files={file} />
-            </div>
-        </div>
-    );
-}
-*/
-import React, { ChangeEvent, useState } from "react";
-import { Task, File } from "../interfaces/Task";
-import PDFFile from "./PDFFile";
-import { v4 as uuidv4 } from "uuid";
-
-const options = ['A', 'B'];
-
-export default function Form() {
-    const initialFileState: File = {
-        tasks: [
-            {
-                question: '',
-                options: options.reduce((obj, option) => {
-                    obj[option] = '';
-                    return obj;
-                }, {} as Record<string, string>),
-                id: null as any,
-            },
-        ],
-        title: '',
-    };
-
-    const [file, setFile] = useState<File>(initialFileState);
-
-    function handleFileChange(event: ChangeEvent<HTMLInputElement>) {
-        const { name, value } = event.target;
-        setFile((prevData) => ({
-            ...prevData,
-            [name]: value,
-        }));
-    }
-
-    function handleTaskChange(event: ChangeEvent<HTMLInputElement>, index: number, option: keyof Task['options']): void {
-        const { value } = event.target;
-        setFile((prevData) => {
-            const newTasks: Task[] = [...prevData.tasks];
-            newTasks[index].options[option] = value;
-            return {
-                ...prevData,
-                tasks: newTasks,
-            };
-        });
-    }
-
-    function addQuestion() {
-        const newTask: Task = {
-            question: '',
-            options: options.reduce((obj, option) => {
-                obj[option] = '';
-                return obj;
-            }, {} as Record<string, string>),
-            id: uuidv4(), // Use a more appropriate method to generate IDs
-        };
-
-        setFile((prevData) => ({
-            ...prevData,
-            tasks: [...prevData.tasks, newTask],
-        }));
-    }
-
-    return (
-        <div className="row">
-            <div className="col-md-8 pt-5">
-                <div className="row">
-                    <div className="col-md-4">
-                        <label htmlFor="inputPassword5" className="col-md-form-label">
-                            Überschrift
-                        </label>
-                    </div>
-                    <div className="col-md-8">
-                        <input
-                            type="text"
-                            id="inputPassword5"
-                            className="form-control"
-                            value={file.title}
-                            name="title"
-                            onChange={handleFileChange}
-                            aria-describedby="passwordHelpBlock"
-                        />
-                    </div>
-                </div>
-
-                <button onClick={addQuestion}>Füge eine Frage hinzu</button>
-
-                {file.tasks.map((task, index) => (
-                    <div key={task.id}>
-                        {/* Render question input */}
-                        <input
-                            type="text"
-                            className="form-control"
-                            value={task.question}
-                            name="question"
-                            onChange={(e) => handleTaskChange(e, index, 'question')}
-                        />
-
-                        {/* Render options input */}
-                        {options.map((option) => (
-                            <input
-                                key={option}
-                                type="text"
-                                className="form-control"
-                                value={task.options[option]}
-                                name={`option${option}`}
-                                onChange={(e) => handleTaskChange(e, index, option as keyof Task['options'])}
-                            />
+                        <button onClick={() => addOption(index)}>Füge eine Option hinzu</button>
+                        {task.options.map((option, index) => (
+                            <div key={option.id}>
+                                <label>{`${index+1}. Option`}</label>
+                                <input
+                                    type="text"
+                                    className="form-control"
+                                    value={option.name}
+                                    name="option"
+                                    onChange={(e) => handleChangeOption(e, index)}
+                                /></div>
                         ))}
+
                     </div>
                 ))}
 
-                {/* ... other code ... */}
+
             </div>
 
             <div className="col-md-4">
-                <PDFFile files={file} />
+                <PDFFile file={{
+                    title: 'Yusuf',
+                    tasks,
+                    author: 'Vader',
+                    date: new Date().toLocaleDateString('de-DE')
+                }}/>
             </div>
         </div>
     );
 }
+

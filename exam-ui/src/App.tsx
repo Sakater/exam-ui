@@ -1,8 +1,6 @@
-import React, {useState} from 'react';
+import React from 'react';
 import './App.css';
 import Form from "./Generation/Form";
-import PDFFile from "./Generation/PDFFile";
-import {FileDetailsProps} from "./interfaces/Task";
 
 function App() {
     return (

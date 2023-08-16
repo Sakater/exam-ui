@@ -1,18 +1,22 @@
-export interface Task {
+export type Task = {
 
     question: string;
-    options: Record<string, string>;
-    id: string | null;
+    options: Option[];
+    id: Id;
 
 }
+export type Option = {
+    name: string;
+    id: Id;
+}
+export type Id = string;
 
-export interface File {
+
+export type File = {
 
     title: string;
     tasks: Task[];
+    author: string;
+    date: string;
 
-}
-
-export interface FileDetailsProps {
-    files: File
 }
