@@ -1,7 +1,8 @@
 import React, {ChangeEvent, useState} from "react";
-import {Task, File, Option, Id} from "../interfaces/Task";
+import {File, Option, Task} from "../interfaces/Types";
 import PDFFile from "./PDFFile";
 import {v4 as uuidv4} from "uuid";
+import ExamTask from "./ExamTask";
 
 export default function Form() {
     const initialFileState: File = {
@@ -14,27 +15,26 @@ export default function Form() {
         ],
         title: '',
         author: '',
-        date: ''
+        date: new Date().toLocaleDateString('de-DE')
     };
 
     const [tasks, setTasks] = useState<Task[]>(initialFileState.tasks);
+    const [file, setFile] = useState<File>(initialFileState);
 
-    /*function handleFileChange(event: ChangeEvent<HTMLInputElement>) {
-        const { name, value } = event.target;
-        setTasks(prevData => ({
+    function handleFileChange({target: {name, value}}: ChangeEvent<HTMLInputElement>) {
+        setFile(prevData => ({
             ...prevData,
             [name]: value
         }));
-    }*/
+    }
 
     function handleTaskChange({target: {name, value}}: ChangeEvent<HTMLInputElement>, index: number) {
-        const typedValue: string = value;
         setTasks(prevTasks => {
             return prevTasks.map((prevTask, mapIndex) => {
                 if (mapIndex === index) {
                     return {
                         ...prevTask,
-                        question: typedValue
+                        question: value
                     }
                 }
                 return prevTask;
@@ -73,81 +73,71 @@ export default function Form() {
         });
     }
 
-    function handleChangeOption({target: {name, value}}: ChangeEvent<HTMLInputElement>, index: number) {
-
-        const newOption: Option = {
-            name: '',
-            id: uuidv4() // Use a more appropriate method to generate IDs
-        };
+    function handleChangeOption({
+                                    target: {
+                                        name,
+                                        value
+                                    }
+                                }: ChangeEvent<HTMLInputElement>, indexTask: number, indexOption: number) {
 
         setTasks(prevTasks => {
             return prevTasks.map((prevTask, mapIndex) => {
-                if (mapIndex === index) {
+                if (mapIndex === indexTask) {
+                    const newOptions = prevTask.options.map((prevOption, mapIndexOption) => {
+                        if (mapIndexOption === indexOption) {
+
+                            return {
+                                ...prevOption,
+                                [name]: value
+                            }
+                        }
+
+                        return prevOption
+                    });
+
                     return {
                         ...prevTask,
-                        options: [...prevTask.options, newOption]
+                        options: newOptions
                     }
                 }
+
                 return prevTask;
-            })
+            });
         });
     }
 
+
     return (
-        <div className="row">
+        <div className="row row-col-2">
             <div className="col-md-8 pt-5">
                 <div className="row">
-                    <div className="col-md-4">
-                        <label htmlFor="inputPassword5" className="col-md-form-label">Überschrift</label>
-                    </div>
-                    <div className="col-md-8">
+                    <div className="col-10">
+                        <label htmlFor="inputPassword5" className="col-2">Titel</label>
                         <input
                             type="text"
-                            id="inputPassword5"
-                            className="form-control"
-
+                            className="col-6"
+                            name="title"
+                            value={file.title}
+                            onChange={(e) => handleFileChange(e)}
                         />
+                    </div>
+                    <div className="col-2">
+                        <button onClick={addTask} >+ Frage</button>
                     </div>
                 </div>
 
-                <button onClick={addTask}>Füge eine Frage hinzu</button>
 
-                {tasks.map((task, index) => (
-                    <div key={task.id}>
-
-                        <label>{`${index+1}. Frage`}</label>
-                        <input
-                            type="text"
-                            className="form-control"
-                            value={task.question}
-                            name="question"
-                            onChange={(e) => handleTaskChange(e, index)}
-                        />
-                        <button onClick={() => addOption(index)}>Füge eine Option hinzu</button>
-                        {task.options.map((option, index) => (
-                            <div key={option.id}>
-                                <label>{`${index+1}. Option`}</label>
-                                <input
-                                    type="text"
-                                    className="form-control"
-                                    value={option.name}
-                                    name="option"
-                                    onChange={(e) => handleChangeOption(e, index)}
-                                /></div>
-                        ))}
-
-                    </div>
-                ))}
-
+                <ExamTask tasks={tasks} handleTaskChange={handleTaskChange} handleChangeOption={handleChangeOption}
+                          addOption={addOption}/>
 
             </div>
 
             <div className="col-md-4">
                 <PDFFile file={{
-                    title: 'Yusuf',
+                    title: file.title,
                     tasks,
-                    author: 'Vader',
-                    date: new Date().toLocaleDateString('de-DE')
+                    author: file.author,
+                    date: file.date
                 }}/>
             </div>
         </div>
