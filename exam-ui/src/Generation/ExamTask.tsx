@@ -9,7 +9,7 @@ type ExamTaskProps = {
     deleteOption: Function
     deleteTask: Function
 }
-export default function ({
+export default function ExamTask({
                              tasks,
                              handleTaskChange,
                              addOption,
@@ -22,14 +22,14 @@ export default function ({
 
         tasks.map((task, indexTask) => (
 
-            <div key={task.id}>
+            <div key={task.id} className=" my-3 border-top border-3 border-opacity-100 border-black">
                 <div className="row pt-4">
                     <div className="col-10 ">
                         <div className="row-cols-2">
-                            <label className="col-2">{`${indexTask + 1}. Frage`}</label>
+                            <label className="col-2"><h5>{`${indexTask + 1}. Frage`}</h5></label>
                             <input
                                 type="text"
-                                className="col-10"
+                                className="col-10 rounded-2 border-black border border-2 border-opacity-100"
                                 value={task.question}
                                 name="question"
                                 onChange={(e) => handleTaskChange(e, indexTask)}
@@ -37,13 +37,13 @@ export default function ({
                         </div>
                     </div>
                     <div className="col-2">{tasks.length > 0 &&
-                        <button className="btn-outline-success "
+                        <button className="bg-success bg-opacity-75 col-4 rounded-pill"
                                 onClick={() => deleteTask( task.id)}>-</button>}
 
                     </div>
 
-                    <div className="col-2">{task.options.length < 10 &&
-                        <button className="btn-outline-success " onClick={() => addOption(indexTask)}>+ Option</button>}
+                    <div className="col-2 ">{task.options.length < 10 &&
+                        <button className="bg-success bg-opacity-75 rounded-pill" onClick={() => addOption(indexTask)}>+ Option</button>}
 
                     </div>
                 </div>
@@ -51,18 +51,20 @@ export default function ({
                     {task.options.map((option, indexOption) => (
 
                         <div key={option.id} className="col-6 pt-3 px-0">
-                            <label className="col-2">{`${alphabet.at(indexOption)})`}</label>
-                            <input
-                                type="text"
-                                className="col-8"
-                                value={option.name}
-                                name="name"
-                                onChange={(e) => handleOptionChange(e, indexTask, indexOption)}
-                            />
-                            <div className="col-2">{task.options.length > 0 &&
-                                <button className="btn-outline-success "
-                                        onClick={() => deleteOption(indexTask, option.id)}>-</button>}
+                            <div className="row">
+                                <label className="col-1">{`${alphabet.at(indexOption)})`}</label>
+                                <input
+                                    type="text"
+                                    className="col-8 rounded-2 border-black border border-2 border-opacity-100"
+                                    value={option.name}
+                                    name="name"
+                                    onChange={(e) => handleOptionChange(e, indexTask, indexOption)}
+                                />
+                                <div className="col-2">{task.options.length > 0 &&
+                                    <button className="col-8 rounded-pill bg-danger bg-opacity-75"
+                                            onClick={() => deleteOption(indexTask, option.id)}>-</button>}
 
+                                </div>
                             </div>
                         </div>
 

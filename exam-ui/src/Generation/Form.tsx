@@ -124,17 +124,17 @@ export default function Form() {
             <div className="col-md-8 pt-5">
                 <div className="row">
                     <div className="col-10">
-                        <label htmlFor="inputPassword5" className="col-2">Titel</label>
+                        <label htmlFor="inputPassword5" className="col-2"><h4>Titel</h4></label>
                         <input
                             type="text"
-                            className="col-6"
+                            className="col-6 rounded-2 border-black border border-2 border-opacity-100"
                             name="title"
                             value={file.title}
                             onChange={(e) => handleFileChange(e)}
                         />
                     </div>
                     <div className="col-2">
-                        <button onClick={addTask}>+ Frage</button>
+                        <button onClick={addTask} className="rounded-pill bg-success bg-opacity-75">+ Frage</button>
                     </div>
                 </div>
 
