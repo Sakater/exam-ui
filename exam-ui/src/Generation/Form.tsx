@@ -1,5 +1,5 @@
 import React, {ChangeEvent, useState} from "react";
-import {File, Option, Task} from "../interfaces/Types";
+import {File, Id, Option, Task} from "../interfaces/Types";
 import PDFFile from "./PDFFile";
 import {v4 as uuidv4} from "uuid";
 import ExamTask from "./ExamTask";
@@ -10,7 +10,7 @@ export default function Form() {
             {
                 question: '',
                 options: [],
-                id: ''
+                id: uuidv4()
             }
         ],
         title: '',
@@ -54,6 +54,22 @@ export default function Form() {
         ]);
     }
 
+    function deleteTask(id: Id) {
+        setTasks(tasks.filter(task => task.id !== id))
+    }
+
+    function deleteOption(index: number, id: Id) {
+        setTasks(prevTasks => {
+            return prevTasks.map((prevTask, mapIndex) => {
+                if (mapIndex === index) {
+                    const newOptions = prevTask.options.filter(option => option.id !== id)
+                    return {...prevTask, options: newOptions}
+                }
+                return prevTask
+            });
+        });
+    }
+
     function addOption(index: number) {
         const newOption: Option = {
             name: '',
@@ -73,12 +89,8 @@ export default function Form() {
         });
     }
 
-    function handleChangeOption({
-                                    target: {
-                                        name,
-                                        value
-                                    }
-                                }: ChangeEvent<HTMLInputElement>, indexTask: number, indexOption: number) {
+    function handleOptionChange({target: {name, value}}: ChangeEvent<HTMLInputElement>,
+                                indexTask: number, indexOption: number) {
 
         setTasks(prevTasks => {
             return prevTasks.map((prevTask, mapIndex) => {
@@ -122,13 +134,13 @@ export default function Form() {
                         />
                     </div>
                     <div className="col-2">
-                        <button onClick={addTask} >+ Frage</button>
+                        <button onClick={addTask}>+ Frage</button>
                     </div>
                 </div>
 
 
-                <ExamTask tasks={tasks} handleTaskChange={handleTaskChange} handleChangeOption={handleChangeOption}
-                          addOption={addOption}/>
+                <ExamTask tasks={tasks} handleTaskChange={handleTaskChange} handleOptionChange={handleOptionChange}
+                          addOption={addOption} deleteOption={deleteOption} deleteTask={deleteTask}/>
 
             </div>
 
