@@ -1,5 +1,6 @@
 import React from "react";
 import {Task} from "../interfaces/Types";
+import any = jasmine.any;
 
 type ExamTaskProps = {
     tasks: Task[];
@@ -9,18 +10,10 @@ type ExamTaskProps = {
     deleteOption: Function
     deleteTask: Function
 }
-export default function ExamTask({
-                             tasks,
-                             handleTaskChange,
-                             addOption,
-                             handleOptionChange,
-                             deleteOption,
-                             deleteTask
-                         }: ExamTaskProps) {
+export default function ExamTask(props: ExamTaskProps):any/*TODO: wie kann ich das ohne "any" ausführen?*/ {
     const alphabet: string[] = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J']
     return (
-
-        tasks.map((task, indexTask) => (
+        props.tasks.map((task, indexTask) => (
 
             <div key={task.id} className=" my-3 border-top border-3 border-opacity-100 border-black">
                 <div className="row pt-4">
@@ -32,18 +25,18 @@ export default function ExamTask({
                                 className="col-10 rounded-2 border-black border border-2 border-opacity-100"
                                 value={task.question}
                                 name="question"
-                                onChange={(e) => handleTaskChange(e, indexTask)}
+                                onChange={(e) => props.handleTaskChange(e, indexTask)}
                             />
                         </div>
                     </div>
-                    <div className="col-2">{tasks.length > 0 &&
+                    <div className="col-2">{props.tasks.length > 0 &&
                         <button className="bg-success bg-opacity-75 col-4 rounded-pill"
-                                onClick={() => deleteTask( task.id)}>-</button>}
+                                onClick={() => props.deleteTask( task.id)}>-</button>}
 
                     </div>
 
                     <div className="col-2 ">{task.options.length < 10 &&
-                        <button className="bg-success bg-opacity-75 rounded-pill" onClick={() => addOption(indexTask)}>+ Option</button>}
+                        <button className="bg-success bg-opacity-75 rounded-pill" onClick={() => props.addOption(indexTask)}>+ Option</button>}
 
                     </div>
                 </div>
@@ -58,11 +51,11 @@ export default function ExamTask({
                                     className="col-8 rounded-2 border-black border border-2 border-opacity-100"
                                     value={option.name}
                                     name="name"
-                                    onChange={(e) => handleOptionChange(e, indexTask, indexOption)}
+                                    onChange={(e) => props.handleOptionChange(e, indexTask, indexOption)}
                                 />
                                 <div className="col-2">{task.options.length > 0 &&
                                     <button className="col-8 rounded-pill bg-danger bg-opacity-75"
-                                            onClick={() => deleteOption(indexTask, option.id)}>-</button>}
+                                            onClick={() => props.deleteOption(indexTask, option.id)}>-</button>}
 
                                 </div>
                             </div>

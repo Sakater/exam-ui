@@ -118,7 +118,6 @@ export default function Form() {
         });
     }
 
-
     return (
         <div className="row row-col-2">
             <div className="col-md-8 pt-5">
