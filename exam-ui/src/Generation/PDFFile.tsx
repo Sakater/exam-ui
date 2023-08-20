@@ -1,21 +1,21 @@
 import React from "react";
-import puppeteer, {ConnectOptions} from "puppeteer";
 import {File} from "../interfaces/Types";
 
 type PDFFileProps = {
     file: File;
 };
-/*const createPdf = async () => {
-        const browser = await puppeteer.launch();
-        const page = await browser.newPage();
 
-        /!*page.goto('')*!/
-    }*/
 function PDFFile({file}: PDFFileProps) {
-
     return (
-        <div>
-
+        <div style={{
+            maxHeight: `${3508 / 4}px`,
+            maxWidth: `${2480 / 4}px`,
+            minHeight: `${3508 / 4}px`,
+            minWidth: `${2480 / 4}px`,
+            border: "2px solid black"
+        }}>
+            <h1>{file.title}</h1>
+            {file.tasks.map((task, index)=> <h5>{`${index}. Frage: ${task.question}`}</h5>)}
         </div>
     );
 
