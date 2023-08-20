@@ -5,7 +5,7 @@ type PDFFileProps = {
     file: File;
 };
 
-function PDFFile({file}: PDFFileProps) {
+function PDFFile({file}: PDFFileProps):any {
     return (
         <div style={{
             maxHeight: `${3508 / 4}px`,

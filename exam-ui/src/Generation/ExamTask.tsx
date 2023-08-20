@@ -1,14 +1,15 @@
 import React, {ChangeEvent} from "react";
-import {Task} from "../interfaces/Types";
+import {Id, Task} from "../interfaces/Types";
 
 
 type ExamTaskProps = {
     tasks: Task[];
-    handleTaskChange: (e:ChangeEvent<HTMLInputElement>, index:number) => void;
-    addOption: Function
-    handleOptionChange: Function
-    deleteOption: Function
-    deleteTask: Function
+    handleTaskChange: (e: ChangeEvent<HTMLInputElement>, index: number) => void;
+    addOption: (index: number) => void
+    handleOptionChange: ({target: {name, value}}: ChangeEvent<HTMLInputElement>,
+                         indexTask: number, indexOption: number) => void
+    deleteOption: (index: number, id: Id) => void
+    deleteTask: (id: Id) => void
 }
 export default function ExamTask(props: ExamTaskProps) {
     const alphabet: string[] = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J']

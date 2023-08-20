@@ -1,4 +1,5 @@
 import React, {ChangeEvent, useState} from "react";
+import ReactDOMServer from 'react-dom/server'
 import {File, Id, Option, Task} from "../interfaces/Types";
 import PDFFile from "./PDFFile";
 import {v4 as uuidv4} from "uuid";
@@ -118,6 +119,12 @@ export default function Form() {
         });
     }
 
+    const createAsPDF=()=>console.log(ReactDOMServer.renderToString(<PDFFile file={{
+        title: file.title,
+        tasks,
+        author: file.author,
+        date: file.date
+    }}/>));
     return (
         <div className="row row-col-2">
             <div className="col-md-8 pt-5">
@@ -140,10 +147,11 @@ export default function Form() {
 
                 <ExamTask tasks={tasks} handleTaskChange={handleTaskChange} handleOptionChange={handleOptionChange}
                           addOption={addOption} deleteOption={deleteOption} deleteTask={deleteTask}/>
+                <button onClick={createAsPDF}>Als PDF erstellen</button>
 
             </div>
 
-            <div  className={"col-md-4 pt-5"}>
+            <div className={"col-md-4 pt-5"}>
                 <PDFFile file={{
                     title: file.title,
                     tasks,
