@@ -83,7 +83,7 @@ export default function Form({ fileDetailsProps }: { fileDetailsProps: FileDetai
                     </div>
                 </div>
 
-                <button onClick={addQuestion}>Füge eine Frage hinzu</button>
+                <button onClick={addQuestion} type="button">Füge eine Frage hinzu</button>
 
                 {file.tasks.map((task, index) => (
                     <div key={task.id}>
@@ -107,7 +107,7 @@ export default function Form({ fileDetailsProps }: { fileDetailsProps: FileDetai
                                 onChange={(e) => handleTaskChange(e, index, option as keyof Task['options'])}
                             />
                         ))}
-                        <button onClick={() => addOption(index)}>Füge Option hinzu</button>
+                        <button onClick={() => addOption(index)} type="button">Füge Option hinzu</button>
                     </div>
                 ))}
             </div>
