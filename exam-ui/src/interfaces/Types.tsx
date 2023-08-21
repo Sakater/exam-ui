@@ -2,6 +2,7 @@ export type Task = {
 
     question: string;
     options: Option[];
+    optionsInARow:number;
     id: Id;
 
 }

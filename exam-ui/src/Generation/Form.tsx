@@ -11,7 +11,8 @@ export default function Form() {
             {
                 question: '',
                 options: [],
-                id: uuidv4()
+                id: uuidv4(),
+                optionsInARow: 2
             }
         ],
         title: '',
@@ -47,7 +48,8 @@ export default function Form() {
         const newTask: Task = {
             question: '',
             options: [],
-            id: uuidv4() // Use a more appropriate method to generate IDs
+            id: uuidv4(), // Use a more appropriate method to generate IDs
+            optionsInARow: 2
         };
 
         setTasks(prevData => [
@@ -119,7 +121,7 @@ export default function Form() {
         });
     }
 
-    const createAsPDF=()=>console.log(ReactDOMServer.renderToString(<PDFFile file={{
+    const createAsPDF = () => console.log(ReactDOMServer.renderToString(<PDFFile file={{
         title: file.title,
         tasks,
         author: file.author,
@@ -139,9 +141,10 @@ export default function Form() {
                             onChange={(e) => handleFileChange(e)}
                         />
                     </div>
-                    <div className="col-2">
-                        <button onClick={addTask} className="rounded-pill bg-success bg-opacity-75">+ Frage</button>
-                    </div>
+                    {tasks.length<10 &&
+                        <div className="col-2">
+                            <button onClick={addTask} className="rounded-pill bg-success bg-opacity-75">+ Frage</button>
+                        </div>}
                 </div>
 
 
