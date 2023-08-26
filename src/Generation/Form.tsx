@@ -1,119 +1,168 @@
-import React, { ChangeEvent, useState } from "react";
-import { Task, File, FileDetailsProps } from "../interfaces/Task";
+import React, {ChangeEvent, useState} from "react";
+import ReactDOMServer from 'react-dom/server'
+import {File, Id, Option, Task} from "../interfaces/Types";
 import PDFFile from "./PDFFile";
-import { v4 as uuidv4 } from "uuid";
+import {v4 as uuidv4} from "uuid";
+import ExamTask from "./ExamTask";
 
-export default function Form({ fileDetailsProps }: { fileDetailsProps: FileDetailsProps }) {
-    const [file, setFile] = useState<File>(fileDetailsProps.files);
+export default function Form() {
+    const initialFileState: File = {
+        tasks: [
+            {
+                question: '',
+                options: [],
+                id: uuidv4(),
+                optionsInARow: 2
+            }
+        ],
+        title: '',
+        author: '',
+        date: new Date().toLocaleDateString('de-DE')
+    };
 
-    function handleFileChange(event: ChangeEvent<HTMLInputElement>) {
-        const { name, value } = event.target;
-        setFile((prevData) => ({
+    const [tasks, setTasks] = useState<Task[]>(initialFileState.tasks);
+    const [file, setFile] = useState<File>(initialFileState);
+
+    function handleFileChange({target: {name, value}}: ChangeEvent<HTMLInputElement>) {
+        setFile(prevData => ({
             ...prevData,
-            [name]: value,
+            [name]: value
         }));
     }
 
-    function handleTaskChange(event: ChangeEvent<HTMLInputElement>, index: number, name: keyof Task['options']): void {
-        const { value } = event.target;
-        setFile((prevData) => {
-            const newTasks: Task[] = [...prevData.tasks];
-            newTasks[index].options[name] = value;
-            return {
-                ...prevData,
-                tasks: newTasks,
-            };
+    function handleTaskChange({target: {name, value}}: ChangeEvent<HTMLInputElement>, index: number) {
+        setTasks(prevTasks => {
+            return prevTasks.map((prevTask, mapIndex) => {
+                if (mapIndex === index) {
+                    return {
+                        ...prevTask,
+                        question: value
+                    }
+                }
+                return prevTask;
+            })
         });
     }
 
-    function addQuestion() {
+    function addTask() {
         const newTask: Task = {
             question: '',
-            options: {},
-            id: uuidv4(),
+            options: [],
+            id: uuidv4(), // Use a more appropriate method to generate IDs
+            optionsInARow: 2
         };
 
-        setFile((prevData) => ({
-            ...prevData,
-            tasks: [...prevData.tasks, newTask],
-        }));
+        setTasks(prevData => [
+            ...prevData, newTask
+        ]);
+    }
+
+    function deleteTask(id: Id) {
+        setTasks(tasks.filter(task => task.id !== id))
+    }
+
+    function deleteOption(index: number, id: Id) {
+        setTasks(prevTasks => {
+            return prevTasks.map((prevTask, mapIndex) => {
+                if (mapIndex === index) {
+                    const newOptions = prevTask.options.filter(option => option.id !== id)
+                    return {...prevTask, options: newOptions}
+                }
+                return prevTask
+            });
+        });
     }
 
     function addOption(index: number) {
-        if (index >= 0 && index < file.tasks.length) {
-            const task = file.tasks[index];
-            const newOptionKey = String.fromCharCode(65 + Object.keys(task.options).length); // Start from 'A'
+        const newOption: Option = {
+            name: '',
+            id: uuidv4() // Use a more appropriate method to generate IDs
+        };
 
-            setFile((prevData) => {
-                const newTasks: Task[] = [...prevData.tasks];
-                newTasks[index] = {
-                    ...newTasks[index],
-                    options: {
-                        ...newTasks[index].options,
-                        [newOptionKey]: '',
-                    },
-                };
-                return {
-                    ...prevData,
-                    tasks: newTasks,
-                };
-            });
-        }
+        setTasks(prevTasks => {
+            return prevTasks.map((prevTask, mapIndex) => {
+                if (mapIndex === index) {
+                    return {
+                        ...prevTask,
+                        options: [...prevTask.options, newOption]
+                    }
+                }
+                return prevTask;
+            })
+        });
     }
 
+    function handleOptionChange({target: {name, value}}: ChangeEvent<HTMLInputElement>,
+                                indexTask: number, indexOption: number) {
+
+        setTasks(prevTasks => {
+            return prevTasks.map((prevTask, mapIndex) => {
+                if (mapIndex === indexTask) {
+                    const newOptions = prevTask.options.map((prevOption, mapIndexOption) => {
+                        if (mapIndexOption === indexOption) {
+
+                            return {
+                                ...prevOption,
+                                [name]: value
+                            }
+                        }
+
+                        return prevOption
+                    });
+
+                    return {
+                        ...prevTask,
+                        options: newOptions
+                    }
+                }
+
+                return prevTask;
+            });
+        });
+    }
+
+    const createAsPDF = () => console.log(ReactDOMServer.renderToString(<PDFFile file={{
+        title: file.title,
+        tasks,
+        author: file.author,
+        date: file.date
+    }}/>));
     return (
-        <div className="row">
+        <div className="row row-col-2">
             <div className="col-md-8 pt-5">
                 <div className="row">
-                    <div className="col-md-4">
-                        <label htmlFor="inputPassword5" className="col-md-form-label">
-                            Überschrift
-                        </label>
-                    </div>
-                    <div className="col-md-8">
+                    <div className="col-10">
+                        <label htmlFor="inputPassword5" className="col-2"><h4>Titel</h4></label>
                         <input
                             type="text"
-                            id="inputPassword5"
-                            className="form-control"
-                            value={file.title}
+                            className="col-6 rounded-2 border-black border border-2 border-opacity-100"
                             name="title"
-                            onChange={handleFileChange}
-                            aria-describedby="passwordHelpBlock"
+                            value={file.title}
+                            onChange={(e) => handleFileChange(e)}
                         />
                     </div>
+                    {tasks.length<10 &&
+                        <div className="col-2">
+                            <button onClick={addTask} className="rounded-pill bg-success bg-opacity-75">+ Frage</button>
+                        </div>}
                 </div>
 
-                <button onClick={addQuestion} type="button">Füge eine Frage hinzu</button>
 
-                {file.tasks.map((task, index) => (
-                    <div key={task.id}>
-                        {/* Render question input */}
-                        <input
-                            type="text"
-                            className="form-control"
-                            value={task.question}
-                            name={`question_${index}`}
-                            onChange={(e) => handleTaskChange(e, index, 'question')}
-                        />
+                <ExamTask tasks={tasks} handleTaskChange={handleTaskChange} handleOptionChange={handleOptionChange}
+                          addOption={addOption} deleteOption={deleteOption} deleteTask={deleteTask}/>
+                <button onClick={createAsPDF}>Als PDF erstellen</button>
 
-                        {/* Render options inputs */}
-                        {Object.keys(task.options).map((option) => (
-                            <input
-                                key={option}
-                                type="text"
-                                className="form-control"
-                                value={task.options[option]}
-                                name={`option_${index}_${option}`}
-                                onChange={(e) => handleTaskChange(e, index, option as keyof Task['options'])}
-                            />
-                        ))}
-                        <button onClick={() => addOption(index)} type="button">Füge Option hinzu</button>
-                    </div>
-                ))}
             </div>
-            <div className="col-md-4">
-                <PDFFile files={file} />
+
+            <div className={"col-md-4 pt-5"}>
+                <PDFFile file={{
+                    title: file.title,
+                    tasks,
+                    author: file.author,
+                    date: file.date
+                }}/>
             </div>
         </div>
     );
 }
+
