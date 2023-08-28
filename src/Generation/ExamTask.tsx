@@ -1,18 +1,22 @@
-import React, {ChangeEvent} from "react";
-import {Id, Task} from "../interfaces/Types";
+import { useState } from "react";
+import { ChangeEvent } from "react";
+import { Id, Task } from "../interfaces/Types";
+import Modal from "./Modal";
 
 
 type ExamTaskProps = {
     tasks: Task[];
     handleTaskChange: (e: ChangeEvent<HTMLInputElement>, index: number) => void;
     addOption: (index: number) => void
-    handleOptionChange: ({target: {name, value}}: ChangeEvent<HTMLInputElement>,
-                         indexTask: number, indexOption: number) => void
+    handleOptionChange: ({ target: { name, value } }: ChangeEvent<HTMLInputElement>,
+        indexTask: number, indexOption: number) => void
     deleteOption: (index: number, id: Id) => void
     deleteTask: (id: Id) => void
 }
 export default function ExamTask(props: ExamTaskProps) {
     const alphabet: string[] = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J']
+    const [openModal, setOpenModal] = useState(false);
+
     return (
         <>{
             props.tasks.map((task, indexTask) => (
@@ -33,15 +37,30 @@ export default function ExamTask(props: ExamTaskProps) {
                         </div>
                         <div className="col-2">{props.tasks.length > 0 &&
                             <button className="bg-success bg-opacity-75 col-4 rounded-pill"
-                                    onClick={() => props.deleteTask(task.id)}>-</button>}
+                                onClick={() => props.deleteTask(task.id)}>-</button>}
+
+                        </div>
+                        <div className={"col-12 row row-cols-12"}>
+                            <button type="button" onClick={() => { setOpenModal(!openModal); }} className={"col-2 rounded-2 left"}>Einstellungen</button>
+                            {openModal &&
+                                <Modal task={task} indexTask={indexTask} addOption={props.addOption} handleTaskChange={props.handleTaskChange} />
+
+                            }</div><div style={{
+                                display: "none", /* Hidden by default */
+                                position: "fixed", /* Stay in place */
+                                zIndex: "1", /* Sit on top */
+                                paddingTop: "100px", /* Location of the box */
+                                left: "0",
+                                top: "0",
+                                width: "100%", /* Full width */
+                                height: "100 %", /* Full height */
+                                overflow: "auto", /* Enable scroll if needed */
+                                backgroundColor: "rgb(0, 0, 0)", /* Fallback color */
+                                backgroundColor: "rgba(0, 0, 0, 0.4)" /* Black w/ opacity */
+                            }}>
 
                         </div>
 
-                        <div className="col-2 ">{task.options.length < 10 &&
-                            <button className="bg-success bg-opacity-75 rounded-pill"
-                                    onClick={() => props.addOption(indexTask)}>+ Option</button>}
-
-                        </div>
                     </div>
                     <div className="row">
                         {task.options.map((option, indexOption) => (
@@ -58,7 +77,7 @@ export default function ExamTask(props: ExamTaskProps) {
                                     />
                                     <div className="col-2">{task.options.length > 0 &&
                                         <button className="col-8 rounded-pill bg-danger bg-opacity-75"
-                                                onClick={() => props.deleteOption(indexTask, option.id)}>-</button>}
+                                            onClick={() => props.deleteOption(indexTask, option.id)}>-</button>}
 
                                     </div>
                                 </div>

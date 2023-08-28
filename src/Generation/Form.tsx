@@ -1,8 +1,8 @@
-import React, {ChangeEvent, useState} from "react";
+import React, { ChangeEvent, useState } from "react";
 import ReactDOMServer from 'react-dom/server'
-import {File, Id, Option, Task} from "../interfaces/Types";
+import { File, Id, Option, Task } from "../interfaces/Types";
 import PDFFile from "./PDFFile";
-import {v4 as uuidv4} from "uuid";
+import { v4 as uuidv4 } from "uuid";
 import ExamTask from "./ExamTask";
 
 export default function Form() {
@@ -23,20 +23,29 @@ export default function Form() {
     const [tasks, setTasks] = useState<Task[]>(initialFileState.tasks);
     const [file, setFile] = useState<File>(initialFileState);
 
-    function handleFileChange({target: {name, value}}: ChangeEvent<HTMLInputElement>) {
+    function handleFileChange({ target: { name, value } }: ChangeEvent<HTMLInputElement>) {
         setFile(prevData => ({
             ...prevData,
             [name]: value
         }));
     }
 
-    function handleTaskChange({target: {name, value}}: ChangeEvent<HTMLInputElement>, index: number) {
+    function handleTaskChange({ target: { name, value } }: ChangeEvent<HTMLInputElement>, index: number) {
+        console.log("Name: ", name, value)
+        if (name === "optionsInARow") {
+            if (parseInt(value) < 0) {
+                value = "0"
+            }
+            else if (parseInt(value) > 4) {
+                value = "4"
+            }
+        }
         setTasks(prevTasks => {
             return prevTasks.map((prevTask, mapIndex) => {
                 if (mapIndex === index) {
                     return {
                         ...prevTask,
-                        question: value
+                        [name]: value
                     }
                 }
                 return prevTask;
@@ -48,7 +57,7 @@ export default function Form() {
         const newTask: Task = {
             question: '',
             options: [],
-            id: uuidv4(), // Use a more appropriate method to generate IDs
+            id: uuidv4(),
             optionsInARow: 2
         };
 
@@ -56,7 +65,9 @@ export default function Form() {
             ...prevData, newTask
         ]);
     }
+    function updateColunsInARow(number: number) {
 
+    }
     function deleteTask(id: Id) {
         setTasks(tasks.filter(task => task.id !== id))
     }
@@ -66,7 +77,7 @@ export default function Form() {
             return prevTasks.map((prevTask, mapIndex) => {
                 if (mapIndex === index) {
                     const newOptions = prevTask.options.filter(option => option.id !== id)
-                    return {...prevTask, options: newOptions}
+                    return { ...prevTask, options: newOptions }
                 }
                 return prevTask
             });
@@ -92,8 +103,8 @@ export default function Form() {
         });
     }
 
-    function handleOptionChange({target: {name, value}}: ChangeEvent<HTMLInputElement>,
-                                indexTask: number, indexOption: number) {
+    function handleOptionChange({ target: { name, value } }: ChangeEvent<HTMLInputElement>,
+        indexTask: number, indexOption: number) {
 
         setTasks(prevTasks => {
             return prevTasks.map((prevTask, mapIndex) => {
@@ -126,7 +137,7 @@ export default function Form() {
         tasks,
         author: file.author,
         date: file.date
-    }}/>));
+    }} />));
     return (
         <div className="row row-col-2">
             <div className="col-md-8 pt-5">
@@ -141,7 +152,7 @@ export default function Form() {
                             onChange={(e) => handleFileChange(e)}
                         />
                     </div>
-                    {tasks.length<10 &&
+                    {tasks.length < 10 &&
                         <div className="col-2">
                             <button onClick={addTask} className="rounded-pill bg-success bg-opacity-75">+ Frage</button>
                         </div>}
@@ -149,7 +160,7 @@ export default function Form() {
 
 
                 <ExamTask tasks={tasks} handleTaskChange={handleTaskChange} handleOptionChange={handleOptionChange}
-                          addOption={addOption} deleteOption={deleteOption} deleteTask={deleteTask}/>
+                    addOption={addOption} deleteOption={deleteOption} deleteTask={deleteTask} />
                 <button onClick={createAsPDF}>Als PDF erstellen</button>
 
             </div>
@@ -160,7 +171,7 @@ export default function Form() {
                     tasks,
                     author: file.author,
                     date: file.date
-                }}/>
+                }} />
             </div>
         </div>
     );
