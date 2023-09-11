@@ -1,8 +1,9 @@
-import React, { ChangeEvent, useState } from "react";
+import React, {ChangeEvent, useState} from "react";
 import ReactDOMServer from 'react-dom/server'
-import { File, Id, Option, Task } from "../interfaces/Types";
+import {File, Id, Option, Task} from "../interfaces/Types";
 import PDFFile from "./PDFFile";
-import { v4 as uuidv4 } from "uuid";
+import {v4 as uuidv4} from "uuid";
+import { saveAs } from 'file-saver'
 import ExamTask from "./ExamTask";
 
 export default function Form() {
@@ -25,21 +26,18 @@ export default function Form() {
     const [tasks, setTasks] = useState<Task[]>(initialFileState.tasks);
     const [file, setFile] = useState<File>(initialFileState);
 
-    function handleFileChange({ target: { name, value } }: ChangeEvent<HTMLInputElement>) {
+    function handleFileChange({target: {name, value}}: ChangeEvent<HTMLInputElement>) {
         setFile(prevData => ({
             ...prevData,
             [name]: value
         }));
     }
 
-    function handleTaskChange({ target: { name, value } }: ChangeEvent<HTMLInputElement>, index: number) {
-        console.log(name, value, typeof (tasks.at(0)?.lines));
-
+    function handleTaskChange({target: {name, value}}: ChangeEvent<HTMLInputElement>, index: number) {
         if (name === "optionsInARow" || name === "totalLines") {
             if (parseInt(value) < 0) {
                 value = "0"
-            }
-            else if (parseInt(value) > 4) {
+            } else if (parseInt(value) > 4) {
                 value = "4"
             }
         }
@@ -70,9 +68,7 @@ export default function Form() {
             ...prevData, newTask
         ]);
     }
-    function updateColunsInARow(number: number) {
 
-    }
     function deleteTask(id: Id) {
         setTasks(tasks.filter(task => task.id !== id))
     }
@@ -82,7 +78,7 @@ export default function Form() {
             return prevTasks.map((prevTask, mapIndex) => {
                 if (mapIndex === index) {
                     const newOptions = prevTask.options.filter(option => option.id !== id)
-                    return { ...prevTask, options: newOptions }
+                    return {...prevTask, options: newOptions}
                 }
                 return prevTask
             });
@@ -108,8 +104,8 @@ export default function Form() {
         });
     }
 
-    function handleOptionChange({ target: { name, value } }: ChangeEvent<HTMLInputElement>,
-        indexTask: number, indexOption: number) {
+    function handleOptionChange({target: {name, value}}: ChangeEvent<HTMLInputElement>,
+                                indexTask: number, indexOption: number) {
 
         setTasks(prevTasks => {
             return prevTasks.map((prevTask, mapIndex) => {
@@ -137,12 +133,17 @@ export default function Form() {
         });
     }
 
-    const createAsPDF = () => console.log(ReactDOMServer.renderToString(<PDFFile file={{
-        title: file.title,
-        tasks,
-        author: file.author,
-        date: file.date
-    }} />));
+    const createAsPDF = () => {
+
+        const text= ReactDOMServer.renderToString(<PDFFile file={{
+            title: file.title,
+            tasks,
+            author: file.author,
+            date: file.date
+        }} size={1}/>)
+        const filee = new Blob([text], { type: 'text/plain;charset=utf-8' });
+        saveAs(filee, 'testt.html');
+    };
     return (
         <div className="row row-col-2">
             <div className="col-md-8 pt-5">
@@ -165,7 +166,7 @@ export default function Form() {
 
 
                 <ExamTask tasks={tasks} handleTaskChange={handleTaskChange} handleOptionChange={handleOptionChange}
-                    addOption={addOption} deleteOption={deleteOption} deleteTask={deleteTask} />
+                          addOption={addOption} deleteOption={deleteOption} deleteTask={deleteTask}/>
                 <button onClick={createAsPDF}>Als PDF erstellen</button>
 
             </div>
@@ -176,7 +177,7 @@ export default function Form() {
                     tasks,
                     author: file.author,
                     date: file.date
-                }} />
+                }} size={1.5}/>
             </div>
         </div>
     );
