@@ -15,7 +15,12 @@ function PDFFile({ file }: PDFFileProps) {
         display: "grid",
         gridTemplateRows: "10% auto",
         paddingTop: "5px",
+        overflow: "hidden"
     }
+    const containerArray = Array.from({ length: 3 }, (_, index) => (
+        <div key={index} className="container">
+            Container {index + 1}
+        </div>));
     return (
         <html lang="de">
             <head>
@@ -32,17 +37,24 @@ function PDFFile({ file }: PDFFileProps) {
                         paddingTop: "5px",
                     }}>
                         {file.tasks.map((task, index) => {
-                            //100% der Seitenbreite wird nach der Anzahl der Spalten aufgeteilt.
 
-                            const gridTemplateColumnsss = Array.from(Array(task.optionsInARow), () => ((100 / task.optionsInARow) | 0) + "%").join(" ");
-                            const gridTemplateColumns = [...Array(task.optionsInARow)].map(() => ((100 / task.optionsInARow) | 0) + "%").join(" ");
-                            console.log("in a row: ", task.optionsInARow)
-                            const gridTemplateColumnss = 100 / task.optionsInARow + "%";
+                            //100% der Seitenbreite wird nach der Anzahl der Spalten aufgeteilt.
+                            const gridTemplateColumns = (((100 / task.optionsInARow) | 0) + "% ").repeat(task.optionsInARow);
 
                             return (
 
-                                <div key={task.id} style={{ display: "inline-grid", gridTemplateRows: "10% auto" }}>
+                                <div key={task.id} style={{ display: "inline-grid", gridTemplateRows: "10% auto", overflow: "hidden" }}>
                                     <h5 style={{ fontSize: "14pt" }} >{`${index + 1}. Frage: ${task.question}`}</h5>
+
+                                    {task.options.length === 0 && task.lines > 0 &&
+                                        Array.from({ length: task.totalLines }, (_, index) => (
+                                            <div key={index} style={{ marginLeft: "10%", marginRight: "10%", marginTop: "5%" }}>
+                                                {task.totalLines > 0 &&
+                                                    Array.from({ length: task.lines }, (_, index) => (
+                                                        <div style={{ borderBottom: "solid black 1px", marginBottom: "3%" }}></div>
+                                                    ))}
+                                            </div>))}
+
                                     <div style={{
                                         display: "inline-grid",
                                         gridTemplateColumns: gridTemplateColumns,
@@ -57,6 +69,15 @@ function PDFFile({ file }: PDFFileProps) {
                                             }}>
                                                 <div>{`${alphabet.at(indexOption)}) `}</div>
                                                 <div style={{ overflow: "hidden" }}>{option.name}</div>
+                                                {/* TODO: muss überarbeitet werden */}
+                                                {task.lines > 0 &&
+                                                    Array.from({ length: task.totalLines }, (_, index) => (
+                                                        <div key={index} style={{ marginLeft: "10%", marginRight: "10%", marginTop: "5%" }}>
+                                                            {task.totalLines > 0 &&
+                                                                Array.from({ length: task.lines }, (_, index) => (
+                                                                    <div style={{ borderBottom: "solid black 1px", marginBottom: "3%" }}></div>
+                                                                ))}
+                                                        </div>))}
                                             </div>
                                         ))}
                                     </div>
@@ -66,7 +87,7 @@ function PDFFile({ file }: PDFFileProps) {
                     </div>
                 </div>
             </body>
-        </html>
+        </html >
     );
 
 

@@ -12,7 +12,9 @@ export default function Form() {
                 question: '',
                 options: [],
                 id: uuidv4(),
-                optionsInARow: 2
+                optionsInARow: 2,
+                lines: 0,
+                totalLines: 0
             }
         ],
         title: '',
@@ -31,8 +33,9 @@ export default function Form() {
     }
 
     function handleTaskChange({ target: { name, value } }: ChangeEvent<HTMLInputElement>, index: number) {
-        console.log("Name: ", name, value)
-        if (name === "optionsInARow") {
+        console.log(name, value, typeof (tasks.at(0)?.lines));
+
+        if (name === "optionsInARow" || name === "totalLines") {
             if (parseInt(value) < 0) {
                 value = "0"
             }
@@ -58,7 +61,9 @@ export default function Form() {
             question: '',
             options: [],
             id: uuidv4(),
-            optionsInARow: 2
+            optionsInARow: 2,
+            lines: 0,
+            totalLines: 0
         };
 
         setTasks(prevData => [

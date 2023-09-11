@@ -2,8 +2,10 @@ export type Task = {
 
     question: string;
     options: Option[];
-    optionsInARow:number;
+    optionsInARow: number;
     id: Id;
+    lines: number;
+    totalLines: number
 
 }
 export type Option = {
