@@ -14,6 +14,11 @@ const fs = require('fs');
 
         console.log('done');
         await browser.close();
+        try {
+            fs.unlinkSync("C:\\Users\\PC-Yusuf\\Downloads\\testt.html")
+        }catch(err) {
+            console.error(err);
+        }
         process.exit();
     } catch (e) {
         console.log('our error', e)

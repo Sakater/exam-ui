@@ -15,7 +15,7 @@ function PDFFile({file, size}: PDFFileProps) {
         width: `${210 / value}mm`,
         display: "grid",
         gridTemplateRows: "10% auto",
-        paddingTop: "5px",
+        paddingTop: "0px",
         border:`${border(size)}`,
         overflow: "hidden"
     }
