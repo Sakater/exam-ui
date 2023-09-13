@@ -4,6 +4,9 @@ export type Task = {
     options: Option[];
     optionsInARow: number;
     id: Id;
+    /**
+    * helping-lines per row
+    * */
     lines: number;
     totalLines: number
 

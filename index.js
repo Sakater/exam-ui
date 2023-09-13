@@ -3,7 +3,7 @@ const fs = require('fs');
 
 (async function () {
     try {
-        const browser = await puppeteer.launch();
+        const browser = await puppeteer.launch({headless: "new"});
         const page = await browser.newPage();
         const content = fs.readFileSync("C:\\Users\\PC-Yusuf\\Downloads\\testt.html");
         await page.setContent(content.toString());
@@ -16,7 +16,7 @@ const fs = require('fs');
         await browser.close();
         try {
             fs.unlinkSync("C:\\Users\\PC-Yusuf\\Downloads\\testt.html")
-        }catch(err) {
+        } catch (err) {
             console.error(err);
         }
         process.exit();

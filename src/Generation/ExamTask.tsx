@@ -56,7 +56,7 @@ export default function ExamTask(props: ExamTaskProps) {
                                 height: "100 %", /* Full height */
                                 overflow: "auto", /* Enable scroll if needed */
                                 backgroundColor: "rgb(0, 0, 0)", /* Fallback color */
-                                backgroundColor: "rgba(0, 0, 0, 0.4)" /* Black w/ opacity */
+                                //backgroundColor: "rgba(0, 0, 0, 0.4)" /* Black w/ opacity */
                             }}>
 
                         </div>

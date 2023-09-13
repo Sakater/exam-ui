@@ -1,9 +1,9 @@
 import React, {ChangeEvent, useState} from "react";
 import ReactDOMServer from 'react-dom/server'
 import {File, Id, Option, Task} from "../interfaces/Types";
-import PDFFile from "./PDFFile";
+import PDFFile from "./view/PDFFile";
 import {v4 as uuidv4} from "uuid";
-import { saveAs } from 'file-saver'
+import {saveAs} from 'file-saver'
 import ExamTask from "./ExamTask";
 
 export default function Form() {
@@ -34,9 +34,12 @@ export default function Form() {
     }
 
     function handleTaskChange({target: {name, value}}: ChangeEvent<HTMLInputElement>, index: number) {
-        if (name === "optionsInARow" || name === "totalLines") {
+        if (name === "totalLines" && parseInt(value) < 0) {
+            value = "0"
+        }
+        if (name === "optionsInARow") {
             if (parseInt(value) < 0) {
-                value = "0"
+
             } else if (parseInt(value) > 4) {
                 value = "4"
             }
@@ -135,13 +138,13 @@ export default function Form() {
 
     const createAsPDF = () => {
 
-        const text= ReactDOMServer.renderToString(<PDFFile file={{
+        const text = ReactDOMServer.renderToString(<PDFFile file={{
             title: file.title,
             tasks,
             author: file.author,
             date: file.date
         }} size={1}/>)
-        const filee = new Blob([text], { type: 'text/plain;charset=utf-8' });
+        const filee = new Blob([text], {type: 'text/plain;charset=utf-8'});
         saveAs(filee, 'testt.html');
     };
     return (
