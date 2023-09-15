@@ -6,11 +6,9 @@ function App() {
     return (
 
         <div className="App">
-            <body>
             <div className="container text-center">
                 <Form/>
             </div>
-            </body>
         </div>
 
     );

@@ -1,4 +1,4 @@
-import React from "react";
+import React, {JSX} from "react";
 import {File} from "../../interfaces/Types";
 import OptionView from "./OptionView";
 
@@ -33,6 +33,23 @@ function PDFFile({file, size}: PDFFileProps) {
     }
 
     const dynamicSize = (expanse: number) => (expanse / size) | 0;
+    const helpingLines = (totalLines: number, lines: number): JSX.Element[] =>
+        Array.from({length: totalLines}, (_, index) => (
+            <div key={index}
+                 style={{
+                     marginLeft: `${dynamicSize(10)}%`,
+                     marginRight: `${dynamicSize(10)}%`,
+                     paddingTop: `${dynamicSize(15)}pt`
+                 }}>
+                {totalLines > 0 &&
+                    Array.from({length: lines}, (_) => (
+                        <div style={{
+                            borderBottom: "solid black 1px",
+                            paddingBottom: `${dynamicSize(10)}pt`
+                        }}></div>
+                    ))}
+            </div>))
+
 
     return (
 
@@ -68,35 +85,26 @@ function PDFFile({file, size}: PDFFileProps) {
                                 {`${index + 1}. Frage: ${task.question}`}
                             </h5>
 
-                            {task.options.length === 0 && task.totalLines > 0 &&
-                                Array.from({length: task.totalLines}, (_, index) => (
-                                    <div key={index}
-                                         style={{
-                                             marginLeft: `${dynamicSize(40)}px`,
-                                             marginRight: `${dynamicSize(40)}px`,
-                                             marginTop: `${dynamicSize(30)}px`
-                                         }}>
-                                        {task.totalLines > 0 &&
-                                            Array.from({length: task.lines}, (_) => (
-                                                <div style={{
-                                                    borderBottom: "solid black 1px",
-                                                    marginBottom: `${dynamicSize(10)}pt`
-                                                }}></div>
-                                            ))}
-                                    </div>))}
+                            {task.totalLines > 0 &&task.options.length === 0 &&
+                                <div style={{
+                                    paddingTop: `${dynamicSize(30)}pt`,
+                                    ...pageWidth
+                                }}>{task.options.length === 0 && task.totalLines > 0 &&
+                                    helpingLines(task.totalLines, task.lines)}</div>}
 
 
                             <div style={{
                                 display: "inline-grid",
                                 gridTemplateColumns: gridTemplateColumns,
-                                gridTemplateRows: "auto"
+                                gridTemplateRows: "auto",
+                                paddingTop: `${dynamicSize(15)}pt`
 
                             }}>
                                 {/*Options*/
                                     task.options.map((option, indexOption) => (
                                         <OptionView option={option} lines={task.lines} totalLines={task.totalLines}
                                                     alphabet={alphabet} indexOption={indexOption}
-                                                    dynamicSize={dynamicSize}/>
+                                                    dynamicSize={dynamicSize} helpingLines={helpingLines}/>
                                     ))}
                             </div>
                         </div>
