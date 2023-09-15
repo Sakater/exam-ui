@@ -6,7 +6,7 @@ function App() {
     return (
 
         <div className="App">
-            <div className="container text-center">
+            <div className="container-fluid text-center">
                 <Form/>
             </div>
         </div>

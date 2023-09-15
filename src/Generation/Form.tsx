@@ -148,21 +148,23 @@ export default function Form() {
         saveAs(filee, 'testt.html');
     };
     return (
-        <div className="row row-col-2">
-            <div className="col-md-8 pt-5">
-                <div className="row">
-                    <div className="col-10">
-                        <label htmlFor="inputPassword5" className="col-2"><h4>Titel</h4></label>
+        <div style={{display: "flex", justifyContent: "center"}}>
+            {/*left control side*/}
+            <div style={{width:"50%"}}>
+                {/*Headline with Title, Author, Date etc.*/}
+                <div style={{display:"flex", justifyContent:"end", borderBottom:"solid 3px black", paddingBottom:"2%"}}>
+                    <div style={{display:"flex", justifyContent:"center", width:"80%"}}>
+                        <label htmlFor="inputPassword5" ><h5>Titel</h5></label>
                         <input
                             type="text"
-                            className="col-6 rounded-2 border-black border border-2 border-opacity-100"
+                            style={{width:"70%", marginLeft:"10%"}}
                             name="title"
                             value={file.title}
                             onChange={(e) => handleFileChange(e)}
                         />
                     </div>
                     {tasks.length < 10 &&
-                        <div className="col-2">
+                        <div>
                             <button onClick={addTask} className="rounded-pill bg-success bg-opacity-75">+ Frage</button>
                         </div>}
                 </div>
@@ -174,13 +176,14 @@ export default function Form() {
 
             </div>
 
-            <div className={"col-md-4 pt-5 pb"} style={{padding:"0"}}>
+            {/*pdf-viewer*/}
+            <div className={"col "} style={{display: "flex", justifyContent:"center"}}>
                 <PDFFile file={{
                     title: file.title,
                     tasks,
                     author: file.author,
                     date: file.date
-                }} size={1.5}/>
+                }} size={1.2}/>
             </div>
         </div>
     );

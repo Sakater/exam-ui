@@ -18,8 +18,7 @@ function PDFFile({file, size}: PDFFileProps) {
         maxWidth: `${210 / value}mm`,
         minWidth: `${210 / value}mm`,
         width: `${210 / value}mm`,
-        display: "grid",
-        gridTemplateRows: "5% auto",
+        display: "flex",
         paddingTop: "0px",
         border: `${border(size)}`,
         overflow: "hidden",
@@ -53,7 +52,7 @@ function PDFFile({file, size}: PDFFileProps) {
 
     return (
 
-        <div style={{...pdfContainer, textAlign: "start"}}>
+        <div style={{...pdfContainer, textAlign: "start", flexDirection:"column",alignContent:"center"}}>
             <div style={{textAlign: "center", paddingTop: `${dynamicSize(15)}pt`}}>
                 <h1 style={{fontSize: `${dynamicSize(16)}pt`}}>{file.title}</h1>
             </div>
