@@ -22,10 +22,10 @@ export default function Form() {
         author: '',
         date: new Date().toLocaleDateString('de-DE')
     };
-
+    const [openModal, setOpenModal] = useState<boolean[]>([false]);
     const [tasks, setTasks] = useState<Task[]>(initialFileState.tasks);
     const [file, setFile] = useState<File>(initialFileState);
-    console.log(tasks.length)
+
     function handleFileChange({target: {name, value}}: ChangeEvent<HTMLInputElement>) {
         setFile(prevData => ({
             ...prevData,
@@ -38,8 +38,8 @@ export default function Form() {
             value = "0"
         }
         if (name === "optionsInARow") {
-            if (parseInt(value) < 0) {
-
+            if (parseInt(value) < 1) {
+                value = "1"
             } else if (parseInt(value) > 4) {
                 value = "4"
             }
@@ -59,7 +59,7 @@ export default function Form() {
 
     function addTask() {
         const newTask: Task = {
-            question: tasks.length+1+'. Frage: ',
+            question: tasks.length + 1 + '. Frage: ',
             options: [],
             id: uuidv4(),
             optionsInARow: 2,
@@ -70,10 +70,16 @@ export default function Form() {
         setTasks(prevData => [
             ...prevData, newTask
         ]);
+        addModal();
     }
 
     function deleteTask(id: Id) {
-        setTasks(tasks.filter(task => task.id !== id))
+        setTasks(tasks.filter((task, mapIndex) => {
+            if (task.id === id) {
+                deleteModal(mapIndex);
+            }
+            return task.id !== id
+        }))
     }
 
     function deleteOption(index: number, id: Id) {
@@ -106,6 +112,22 @@ export default function Form() {
             })
         });
     }
+
+    const changeModal = (indexTask: number) => {
+        setOpenModal(prevState => {
+            return prevState.map((prevState, mapIndex) => {
+                if (mapIndex === indexTask) {
+                    return !prevState;
+                }
+                return prevState;
+            })
+        });
+    }
+    const deleteModal = (indexTask: number) => {
+        setOpenModal(openModal.filter((openModal, index) => indexTask !== index));
+    }
+    const addModal = () => setOpenModal(prevState => [...prevState, false])
+
 
     function handleOptionChange({target: {name, value}}: ChangeEvent<HTMLInputElement>,
                                 indexTask: number, indexOption: number) {
@@ -148,7 +170,7 @@ export default function Form() {
         saveAs(filee, 'testt.html');
     };
     return (
-        <div style={{display: "flex", justifyContent: "center", flexWrap: "wrap", width:"100%"}}>
+        <div style={{display: "flex", justifyContent: "center", flexWrap: "wrap", width: "100%"}}>
             {/*left control side*/}
             <div style={{width: "50%"}}>
                 {/*Headline with Title, Author, Date etc.*/}
@@ -176,7 +198,8 @@ export default function Form() {
 
 
                 <ExamTask tasks={tasks} handleTaskChange={handleTaskChange} handleOptionChange={handleOptionChange}
-                          addOption={addOption} deleteOption={deleteOption} deleteTask={deleteTask}/>
+                          addOption={addOption} deleteOption={deleteOption} deleteTask={deleteTask}
+                          openModal={openModal} changeModal={changeModal} />
 
 
             </div>
@@ -190,7 +213,7 @@ export default function Form() {
                     date: file.date
                 }} size={1.2}/>
             </div>
-            <div style={{width:"100%"}}>
+            <div style={{width: "100%"}}>
                 <button onClick={createAsPDF}>Als PDF erstellen</button>
             </div>
         </div>
