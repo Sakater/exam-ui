@@ -10,7 +10,7 @@ export default function Form() {
     const initialFileState: File = {
         tasks: [
             {
-                question: '',
+                question: '1. Frage:',
                 options: [],
                 id: uuidv4(),
                 optionsInARow: 2,
@@ -25,7 +25,7 @@ export default function Form() {
 
     const [tasks, setTasks] = useState<Task[]>(initialFileState.tasks);
     const [file, setFile] = useState<File>(initialFileState);
-
+    console.log(tasks.length)
     function handleFileChange({target: {name, value}}: ChangeEvent<HTMLInputElement>) {
         setFile(prevData => ({
             ...prevData,
@@ -59,7 +59,7 @@ export default function Form() {
 
     function addTask() {
         const newTask: Task = {
-            question: '',
+            question: tasks.length+1+'. Frage: ',
             options: [],
             id: uuidv4(),
             optionsInARow: 2,
@@ -148,16 +148,21 @@ export default function Form() {
         saveAs(filee, 'testt.html');
     };
     return (
-        <div style={{display: "flex", justifyContent: "center"}}>
+        <div style={{display: "flex", justifyContent: "center", flexWrap: "wrap", width:"100%"}}>
             {/*left control side*/}
-            <div style={{width:"50%"}}>
+            <div style={{width: "50%"}}>
                 {/*Headline with Title, Author, Date etc.*/}
-                <div style={{display:"flex", justifyContent:"end", borderBottom:"solid 3px black", paddingBottom:"2%"}}>
-                    <div style={{display:"flex", justifyContent:"center", width:"80%"}}>
-                        <label htmlFor="inputPassword5" ><h5>Titel</h5></label>
+                <div style={{
+                    display: "flex",
+                    justifyContent: "end",
+                    borderBottom: "solid 3px black",
+                    paddingBottom: "2%"
+                }}>
+                    <div style={{display: "flex", justifyContent: "center", width: "80%"}}>
+                        <label htmlFor="inputPassword5"><h5>Titel</h5></label>
                         <input
                             type="text"
-                            style={{width:"70%", marginLeft:"10%"}}
+                            style={{width: "70%", marginLeft: "10%"}}
                             name="title"
                             value={file.title}
                             onChange={(e) => handleFileChange(e)}
@@ -172,18 +177,21 @@ export default function Form() {
 
                 <ExamTask tasks={tasks} handleTaskChange={handleTaskChange} handleOptionChange={handleOptionChange}
                           addOption={addOption} deleteOption={deleteOption} deleteTask={deleteTask}/>
-                <button onClick={createAsPDF}>Als PDF erstellen</button>
+
 
             </div>
 
             {/*pdf-viewer*/}
-            <div className={"col "} style={{display: "flex", justifyContent:"center"}}>
+            <div className={"col "} style={{display: "flex", justifyContent: "center"}}>
                 <PDFFile file={{
                     title: file.title,
                     tasks,
                     author: file.author,
                     date: file.date
                 }} size={1.2}/>
+            </div>
+            <div style={{width:"100%"}}>
+                <button onClick={createAsPDF}>Als PDF erstellen</button>
             </div>
         </div>
     );

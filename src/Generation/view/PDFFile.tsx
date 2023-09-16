@@ -79,9 +79,10 @@ function PDFFile({file, size}: PDFFileProps) {
                             <h5 style={{
                                 ...pageWidth,
                                 fontSize: `${dynamicSize(14)}pt`,
-                                paddingTop: `${dynamicSize(25)}pt`
+                                paddingTop: `${dynamicSize(25)}pt`,
+                                paddingLeft:`${dynamicSize(15)}pt`
                             }}>
-                                {`${index + 1}. Frage: ${task.question}`}
+                                {`${task.question}`}
                             </h5>
 
                             {task.totalLines > 0 &&task.options.length === 0 &&

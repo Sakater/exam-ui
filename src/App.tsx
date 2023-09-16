@@ -6,7 +6,7 @@ function App() {
     return (
 
         <div className="App">
-            <div className="container-fluid text-center">
+            <div style={{display:"flex", flexWrap:"wrap", justifyContent:"center", width:"100%"}}>
                 <Form/>
             </div>
         </div>

@@ -1,5 +1,4 @@
-import {useState} from "react";
-import {ChangeEvent} from "react";
+import {ChangeEvent, useState} from "react";
 import {Id, Task} from "../interfaces/Types";
 import Modal from "./Modal";
 
@@ -25,6 +24,7 @@ export default function ExamTask(props: ExamTaskProps) {
     return (
         <>{
             props.tasks.map((task, indexTask) => (
+
                 /*whole task with options*/
                 <div key={task.id}
                      style={{
@@ -32,17 +32,18 @@ export default function ExamTask(props: ExamTaskProps) {
                          justifyContent: "center",
                          alignItems: "center",
                          flexWrap: "wrap",
-                         paddingTop: "3%"
+                         paddingTop: "3%",
+                         paddingLeft:"3%"
                      }}>
 
-                    <div style={{...flexbox, justifyContent: "start", flexWrap: "wrap", width: "100%"}}>
+                    <div style={{...flexbox, justifyContent: "center", flexWrap: "wrap", width: "100%"}}>
                         {/*Line With Task, input field, and delete button*/}
-                        <div style={{...flexbox, width: "100%"}}>
-                            <h5 style={{marginRight: "10%"}}>{`${indexTask + 1}. Frage`}</h5>
+                        <div style={{...flexbox, justifyContent: "center",width: "100%"}}>
+                            <h5 style={{marginRight: "3%", fontSize:"14pt"}}>{`${indexTask + 1}-`}</h5>
                             <input
                                 type="text"
                                 className="rounded-2 border-black border border-2 border-opacity-100"
-                                style={{width: "65%", marginRight: "10%"}}
+                                style={{width: "70%", marginRight: "2%"}}
                                 value={task.question}
                                 name="question"
                                 onChange={(e) => props.handleTaskChange(e, indexTask)}
@@ -50,7 +51,7 @@ export default function ExamTask(props: ExamTaskProps) {
 
 
                             {/*Delete Task Button*/}
-                            <button className="bg-success bg-opacity-75 rounded-pill" style={{width: "10%"}}
+                            <button className="bg-success bg-opacity-75 rounded-pill" style={{width: "7%"}}
                                     onClick={() => props.deleteTask(task.id)}>-
                             </button>
                         </div>
