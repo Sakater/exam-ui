@@ -5,9 +5,10 @@ import OptionView from "./OptionView";
 type PDFFileProps = {
     file: File;
     size: number;
+    showTask: (indexTask: number) => boolean
 };
 
-function PDFFile({file, size}: PDFFileProps) {
+function PDFFile({file, size, showTask}: PDFFileProps) {
     const alphabet: string[] = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J']
     const value = size;
     const border = (number: number) => number > 1 ? "2px solid black" : "";
@@ -52,7 +53,7 @@ function PDFFile({file, size}: PDFFileProps) {
 
     return (
 
-        <div style={{...pdfContainer, textAlign: "start", flexDirection:"column",alignContent:"center"}}>
+        <div style={{...pdfContainer, textAlign: "start", flexDirection: "column", alignContent: "center"}}>
             <div style={{textAlign: "center", paddingTop: `${dynamicSize(15)}pt`}}>
                 <h1 style={{fontSize: `${dynamicSize(16)}pt`}}>{file.title}</h1>
             </div>
@@ -69,6 +70,7 @@ function PDFFile({file, size}: PDFFileProps) {
                     const gridTemplateColumns = (((100 / task.optionsInARow) | 0) + "% ").repeat(task.optionsInARow);
 
                     return (
+                        showTask(index) &&
 
                         <div key={task.id}
                              style={{
@@ -80,12 +82,12 @@ function PDFFile({file, size}: PDFFileProps) {
                                 ...pageWidth,
                                 fontSize: `${dynamicSize(14)}pt`,
                                 paddingTop: `${dynamicSize(25)}pt`,
-                                paddingLeft:`${dynamicSize(15)}pt`
+                                paddingLeft: `${dynamicSize(15)}pt`
                             }}>
                                 {`${task.question}`}
                             </h5>
 
-                            {task.totalLines > 0 &&task.options.length === 0 &&
+                            {task.totalLines > 0 && task.options.length === 0 &&
                                 <div style={{
                                     paddingTop: `${dynamicSize(30)}pt`,
                                     ...pageWidth

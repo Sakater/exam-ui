@@ -13,6 +13,7 @@ type ExamTaskProps = {
     deleteOption: (index: number, id: Id) => void
     deleteTask: (id: Id) => void
     changeModal: (indexTask: number) => void
+    showTask: (indexTask: number) => boolean
 
 }
 export default function ExamTask(props: ExamTaskProps) {
@@ -23,11 +24,11 @@ export default function ExamTask(props: ExamTaskProps) {
         alignItems: "center"
     }
 
-    // @ts-ignore
+
     return (
         <>{
             props.tasks.map((task, indexTask) => (
-
+                props.showTask(indexTask)&&
                 /*whole task with options*/
                 <div key={task.id}
                      style={{

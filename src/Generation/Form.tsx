@@ -20,11 +20,28 @@ export default function Form() {
         ],
         title: '',
         author: '',
-        date: new Date().toLocaleDateString('de-DE')
+        date: new Date().toLocaleDateString('de-DE'),
+        tasksPerPage: 5
     };
     const [openModal, setOpenModal] = useState<boolean[]>([false]);
     const [tasks, setTasks] = useState<Task[]>(initialFileState.tasks);
     const [file, setFile] = useState<File>(initialFileState);
+    const [currentPage, setCurrentPage] = useState<number>(1)
+
+    const pages = (): number => {
+        const countPages = tasks.length % file.tasksPerPage
+        if (countPages > 0) {
+            return ((tasks.length / file.tasksPerPage) | 0) + 1
+        }
+        return ((tasks.length / file.tasksPerPage) | 0);
+    };
+
+    /**
+     * returns true if the taskindex is on the current page
+     * */
+    const showTask = (indexTask: number): boolean => {
+        return indexTask >= ((currentPage - 1) * file.tasksPerPage) && indexTask < currentPage * file.tasksPerPage
+    }
 
     function handleFileChange({target: {name, value}}: ChangeEvent<HTMLInputElement>) {
         setFile(prevData => ({
@@ -158,14 +175,25 @@ export default function Form() {
         });
     }
 
-    const createAsPDF = () => {
+    const createAsPDF = async () => {
+        const existingPages = pages()
+        let text: string = ""
+        setCurrentPage(1);
+        for (let _i: number = 1; _i <= existingPages; _i++) {
+            setCurrentPage(_i)
+            console.log("_i", _i);
+            console.log("currentPage", currentPage)
+            text += ReactDOMServer.renderToString(<PDFFile file={{
+                title: file.title,
+                tasks,
+                author: file.author,
+                date: file.date,
+                tasksPerPage: file.tasksPerPage,
+            }} size={1} showTask={showTask}/>)
+            console.log("Enzeln", text)
+        }
+        console.log("Gesamt", text)
 
-        const text = ReactDOMServer.renderToString(<PDFFile file={{
-            title: file.title,
-            tasks,
-            author: file.author,
-            date: file.date
-        }} size={1}/>)
         const filee = new Blob([text], {type: 'text/plain;charset=utf-8'});
         saveAs(filee, 'testt.html');
     };
@@ -199,20 +227,33 @@ export default function Form() {
 
                 <ExamTask tasks={tasks} handleTaskChange={handleTaskChange} handleOptionChange={handleOptionChange}
                           addOption={addOption} deleteOption={deleteOption} deleteTask={deleteTask}
-                          openModal={openModal} changeModal={changeModal} />
+                          openModal={openModal} changeModal={changeModal} showTask={showTask}/>
 
 
             </div>
+            <div style={{display: "flex", alignItems: "start", justifyContent: "end"}}>{
+                currentPage > 1 &&
+                <button onClick={() => setCurrentPage(currentPage - 1)}>zurück
+                </button>
+            }
+                {/*pdf-viewer*/}
+                <div className={"col "} style={{display: "flex", justifyContent: "center"}}>
+                    <PDFFile file={{
+                        title: file.title,
+                        tasks,
+                        author: file.author,
+                        date: file.date,
+                        tasksPerPage: file.tasksPerPage
+                    }} size={1.2} showTask={showTask}/>
+                </div>
 
-            {/*pdf-viewer*/}
-            <div className={"col "} style={{display: "flex", justifyContent: "center"}}>
-                <PDFFile file={{
-                    title: file.title,
-                    tasks,
-                    author: file.author,
-                    date: file.date
-                }} size={1.2}/>
-            </div>
+
+                {
+                    currentPage < pages() &&
+                    <button onClick={() => setCurrentPage(currentPage + 1)}>nächste Seite
+                    </button>
+                }</div>
+
             <div style={{width: "100%"}}>
                 <button onClick={createAsPDF}>Als PDF erstellen</button>
             </div>

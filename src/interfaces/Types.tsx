@@ -5,8 +5,8 @@ export type Task = {
     optionsInARow: number;
     id: Id;
     /**
-    * helping-lines per row
-    * */
+     * helping-lines per row
+     * */
     lines: number;
     totalLines: number
 
@@ -24,5 +24,6 @@ export type File = {
     tasks: Task[];
     author: string;
     date: string;
+    tasksPerPage: number;
 
 }
