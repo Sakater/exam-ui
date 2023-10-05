@@ -1,7 +1,7 @@
 const puppeteer = require('puppeteer');
 const fs = require('fs');
 
-(async function () {
+(async function() {
     try {
         const browser = await puppeteer.launch({headless: "new"});
         const page = await browser.newPage();

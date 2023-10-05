@@ -10,7 +10,8 @@ export default function Form() {
     const initialFileState: File = {
         tasks: [
             {
-                question: '1. Frage:',
+                numeration: 1 + ')',
+                question: '',
                 options: [],
                 id: uuidv4(),
                 optionsInARow: 2,
@@ -37,7 +38,7 @@ export default function Form() {
     };
 
     /**
-     * returns true if the taskindex is on the current page
+     * returns true if the task-index is on the current page
      * */
     const showTask = (indexTask: number): boolean => {
         return indexTask >= ((currentPage - 1) * file.tasksPerPage) && indexTask < currentPage * file.tasksPerPage
@@ -76,7 +77,8 @@ export default function Form() {
 
     function addTask() {
         const newTask: Task = {
-            question: tasks.length + 1 + '. Frage: ',
+            numeration: tasks.length + 1 + ')',
+            question: '',
             options: [],
             id: uuidv4(),
             optionsInARow: 2,
@@ -175,32 +177,48 @@ export default function Form() {
         });
     }
 
-    const createAsPDF = async () => {
+    const handleSort = (dragItem: React.MutableRefObject<any>, dragOverItem: React.MutableRefObject<any>) => {
+        let taskItems = [...tasks];
+        const draggedItemContent = taskItems.splice(dragItem.current, 1)[0];
+        taskItems.splice(dragOverItem.current, 0, draggedItemContent);
+
+        dragItem.current = null;
+        dragOverItem.current = null;
+        setTasks(taskItems)
+
+        setTasks(prevTasks => {
+            return prevTasks.map((prevTask, mapIndex) => {
+
+                    return {
+                        ...prevTask,
+                        numeration: (mapIndex+1).toString()
+                    }
+
+            })
+        });
+    }
+
+    const createAsPDF = () => {
         const existingPages = pages()
         let text: string = ""
-        setCurrentPage(1);
         for (let _i: number = 1; _i <= existingPages; _i++) {
-            setCurrentPage(_i)
-            console.log("_i", _i);
-            console.log("currentPage", currentPage)
+
             text += ReactDOMServer.renderToString(<PDFFile file={{
                 title: file.title,
                 tasks,
                 author: file.author,
                 date: file.date,
                 tasksPerPage: file.tasksPerPage,
-            }} size={1} showTask={showTask}/>)
-            console.log("Enzeln", text)
+            }} size={1} currentPage={_i}/>)
         }
-        console.log("Gesamt", text)
-
         const filee = new Blob([text], {type: 'text/plain;charset=utf-8'});
         saveAs(filee, 'testt.html');
     };
+
     return (
         <div style={{display: "flex", justifyContent: "center", flexWrap: "wrap", width: "100%"}}>
             {/*left control side*/}
-            <div style={{width: "50%"}}>
+            <div style={{width: "50%", paddingRight: "5%"}}>
                 {/*Headline with Title, Author, Date etc.*/}
                 <div style={{
                     display: "flex",
@@ -227,13 +245,17 @@ export default function Form() {
 
                 <ExamTask tasks={tasks} handleTaskChange={handleTaskChange} handleOptionChange={handleOptionChange}
                           addOption={addOption} deleteOption={deleteOption} deleteTask={deleteTask}
-                          openModal={openModal} changeModal={changeModal} showTask={showTask}/>
+                          openModal={openModal} changeModal={changeModal} showTask={showTask} handleSort={handleSort}/>
 
 
             </div>
-            <div style={{display: "flex", alignItems: "start", justifyContent: "end"}}>{
-                currentPage > 1 &&
-                <button onClick={() => setCurrentPage(currentPage - 1)}>zurück
+            <div style={{display: "flex", alignItems: "center", justifyContent: "end"}}>{
+                pages() > 1 &&
+                <button onClick={() => {
+                    if (currentPage > 1) {
+                        setCurrentPage(currentPage - 1);
+                    }
+                }} style={{marginRight: "1.5%", border: "none", scale: "150%"}}>⬅️
                 </button>
             }
                 {/*pdf-viewer*/}
@@ -244,18 +266,23 @@ export default function Form() {
                         author: file.author,
                         date: file.date,
                         tasksPerPage: file.tasksPerPage
-                    }} size={1.2} showTask={showTask}/>
+                    }} size={1.2} currentPage={currentPage}/>
                 </div>
 
 
                 {
-                    currentPage < pages() &&
-                    <button onClick={() => setCurrentPage(currentPage + 1)}>nächste Seite
+                    pages() > 1 &&
+                    <button onClick={() => {
+                        if (currentPage < pages()) {
+                            setCurrentPage(currentPage + 1);
+                        }
+                    }} style={{marginLeft: "1.5%", border: "none", scale: "150%"}}>➡️
                     </button>
-                }</div>
+                }
+            </div>
 
             <div style={{width: "100%"}}>
-                <button onClick={createAsPDF}>Als PDF erstellen</button>
+                <button onClick={createAsPDF} name="printAsPDF">Als PDF erstellen</button>
             </div>
         </div>
     );

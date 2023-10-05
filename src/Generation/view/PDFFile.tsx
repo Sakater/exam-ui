@@ -5,10 +5,10 @@ import OptionView from "./OptionView";
 type PDFFileProps = {
     file: File;
     size: number;
-    showTask: (indexTask: number) => boolean
+    currentPage:number;
 };
 
-function PDFFile({file, size, showTask}: PDFFileProps) {
+function PDFFile({file, size, currentPage}: PDFFileProps) {
     const alphabet: string[] = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J']
     const value = size;
     const border = (number: number) => number > 1 ? "2px solid black" : "";
@@ -50,6 +50,9 @@ function PDFFile({file, size, showTask}: PDFFileProps) {
                     ))}
             </div>))
 
+    const showTask = (indexTask: number): boolean => {
+        return indexTask >= ((currentPage - 1) * file.tasksPerPage) && indexTask < currentPage * file.tasksPerPage
+    }
 
     return (
 
@@ -84,7 +87,7 @@ function PDFFile({file, size, showTask}: PDFFileProps) {
                                 paddingTop: `${dynamicSize(25)}pt`,
                                 paddingLeft: `${dynamicSize(15)}pt`
                             }}>
-                                {`${task.question}`}
+                                {`${task.numeration} ${task.question}`}
                             </h5>
 
                             {task.totalLines > 0 && task.options.length === 0 &&

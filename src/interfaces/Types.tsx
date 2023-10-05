@@ -1,5 +1,5 @@
 export type Task = {
-
+    numeration:string
     question: string;
     options: Option[];
     optionsInARow: number;
