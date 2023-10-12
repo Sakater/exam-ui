@@ -5,6 +5,9 @@ import PDFFile from "./view/PDFFile";
 import {v4 as uuidv4} from "uuid";
 import {saveAs} from 'file-saver'
 import ExamTask from "./ExamTask";
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+import {solid} from "@fortawesome/fontawesome-svg-core/import.macro";
+import {faArrowRight} from "@fortawesome/free-solid-svg-icons";
 
 export default function Form() {
     const initialFileState: File = {
@@ -249,13 +252,14 @@ export default function Form() {
 
 
             </div>
-            <div style={{display: "flex", alignItems: "center", justifyContent: "end"}}>{
+            <div style={{display: "flex", alignItems: "start", justifyContent: "end"}}><div style={{display:"flex",alignItems:"center"}}>{
                 pages() > 1 &&
                 <button onClick={() => {
                     if (currentPage > 1) {
                         setCurrentPage(currentPage - 1);
                     }
-                }} style={{marginRight: "1.5%", border: "none", scale: "150%"}}>⬅️
+                }} style={{marginRight: "1.5%", border: "none", scale: "150%", backgroundColor:"unset"}}>
+                    <FontAwesomeIcon icon={faArrowRight} rotation={180} />
                 </button>
             }
                 {/*pdf-viewer*/}
@@ -276,10 +280,12 @@ export default function Form() {
                         if (currentPage < pages()) {
                             setCurrentPage(currentPage + 1);
                         }
-                    }} style={{marginLeft: "1.5%", border: "none", scale: "150%"}}>➡️
+                    }} style={{marginLeft: "1.5%", border: "none", scale: "150%",backgroundColor:"unset"}}>
+                        <FontAwesomeIcon icon={faArrowRight} />
                     </button>
                 }
             </div>
+        </div>
 
             <div style={{width: "100%"}}>
                 <button onClick={createAsPDF} name="printAsPDF">Als PDF erstellen</button>
